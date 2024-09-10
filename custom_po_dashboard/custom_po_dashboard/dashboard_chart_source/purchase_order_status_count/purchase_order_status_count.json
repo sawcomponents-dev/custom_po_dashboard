@@ -1,0 +1,13 @@
+{
+ "creation": "2024-09-07 12:28:18.239822",
+ "docstatus": 0,
+ "doctype": "Dashboard Chart Source",
+ "idx": 2,
+ "modified": "2024-09-10 08:56:43.462767",
+ "modified_by": "Administrator",
+ "module": "Custom Po Dashboard",
+ "name": "Purchase Order Status Count",
+ "owner": "Administrator",
+ "source_name": "Purchase Order Status Count",
+ "timeseries": 0
+}
