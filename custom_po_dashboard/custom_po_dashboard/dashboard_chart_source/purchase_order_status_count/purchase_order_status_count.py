@@ -24,6 +24,8 @@ def get(
 	filters = frappe.parse_json(filters)
 	if filters and filters.get("company"):
 		company = filters.get("company")
+	else:
+		company =  frappe.defaults.get_user_default("company")
 
 	data = frappe.db.sql(f"""
 			SELECT workflow_state, COUNT(*) AS count
