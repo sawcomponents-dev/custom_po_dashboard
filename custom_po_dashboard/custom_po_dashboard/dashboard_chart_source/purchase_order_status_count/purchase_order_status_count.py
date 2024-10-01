@@ -6,7 +6,6 @@ import frappe
 from frappe import _
 from frappe.utils.dashboard import cache_source
 
-
 @frappe.whitelist()
 @cache_source
 def get(
@@ -31,8 +30,20 @@ def get(
 			SELECT workflow_state, COUNT(*) AS count
 			FROM `tabPurchase Order`
 			WHERE company = '{company}'
+			AND workflow_state != 'Expect Delivery'
 			GROUP BY workflow_state
 		""", as_dict=True)
+
+	expected_delivery = frappe.db.sql(f"""
+			SELECT status as workflow_state, COUNT(*) AS count
+			FROM `tabPurchase Order`
+			WHERE company = '{company}'
+			AND workflow_state = 'Expect Delivery'
+			AND status != 'Completed'
+			GROUP BY status
+		""", as_dict=True)
+
+	data.extend(expected_delivery)
 
 	if not data:
 		return []
