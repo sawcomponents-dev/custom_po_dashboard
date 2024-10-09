@@ -30,7 +30,7 @@ def get(
 			SELECT workflow_state, COUNT(*) AS count
 			FROM `tabPurchase Order`
 			WHERE company = '{company}'
-			AND workflow_state != 'Expect Delivery'
+			AND workflow_state not in ('Expect Delivery', 'PO Rejected', 'Rejected')
 			GROUP BY workflow_state
 		""", as_dict=True)
 
@@ -39,7 +39,7 @@ def get(
 			FROM `tabPurchase Order`
 			WHERE company = '{company}'
 			AND workflow_state = 'Expect Delivery'
-			AND status != 'Completed'
+			AND status not in ('Completed', 'Cancelled', 'Closed')
 			GROUP BY status
 		""", as_dict=True)
 
