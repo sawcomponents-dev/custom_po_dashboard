@@ -73,11 +73,19 @@ def get(
 		return []
 
 	for d in data:
-		labels.append(_(d.workflow_state))
-		datapoints.append(_(d.count))
+		# Get the state/status string. Use .strip() just in case of leading/trailing whitespace
+		state_or_status = d.workflow_state.strip()
+		labels.append(_(state_or_status))
+		datapoints.append(d.count) # No need for _() on counts (they are numbers)
+
+
+		# Append the corresponding color, using the default if not found
+		colors.append(COLOR_MAP.get(state_or_status, DEFAULT_COLOR))
+
 
 	return {
 		"labels": labels,
 		"datasets": [{"name": _("Documents Count"), "values": datapoints}],
 		"type": "bar",
+		"colors": colors, # Add the colors list here
 	}
