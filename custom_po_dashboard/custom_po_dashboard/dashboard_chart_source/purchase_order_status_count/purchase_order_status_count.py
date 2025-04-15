@@ -11,7 +11,7 @@ COLOR_MAP = {
 	"To Approve": "#fff1e7",       # Light Orange/Peach
 	"To Check": "#edf6fd",         # Very Light Blue
 	"Waiting for PO Confirmation": "#e4f5e9", # Very Light Green (Assuming this matches "Waiting ...")
-	"To Order": "#f8d7da",         # Light Red
+	"To Order": "#fff0f0",         # Light Red
 	"To Bill": "#fff1e7",          # Light Orange/Peach (Same as To Approve)
 
 	# Deduced from Chart Image (assigning distinct light colors):
