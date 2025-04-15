@@ -6,6 +6,30 @@ import frappe
 from frappe import _
 from frappe.utils.dashboard import cache_source
 
+COLOR_MAP = {
+	# User Specified:
+	"To Approve": "#fff1e7",       # Light Orange/Peach
+	"To Check": "#edf6fd",         # Very Light Blue
+	"Waiting for PO Confirmation": "#e4f5e9", # Very Light Green (Assuming this matches "Waiting ...")
+	"To Order": "#f8d7da",         # Light Red
+	"To Bill": "#fff1e7",          # Light Orange/Peach (Same as To Approve)
+
+	# Deduced from Chart Image (assigning distinct light colors):
+	"To Receive": "#cfe2ff",       # Light Blue/Indigo
+	"To Receive and Bill": "#d1ecf1", # Light Cyan/Teal (Assuming this matches "To Recei ...")
+
+	# Add other potential standard workflow states (optional, but good practice):
+	"Draft": "#fdfdfe",            # Very Light Grey / Off-white
+	"Pending": "#fff3cd",          # Light Yellow
+	"Approved": "#d4edda",         # Light Green (Different from Waiting Confirmation)
+	"Cancelled": "#e2e3e5",        # Light Grey
+	# Add any other possible statuses/states returned by your specific workflow
+}
+# Define a default color for any state/status not explicitly mapped
+DEFAULT_COLOR = "#f8f9fa" # Very light grey / almost white
+
+
+
 @frappe.whitelist()
 @cache_source
 def get(
