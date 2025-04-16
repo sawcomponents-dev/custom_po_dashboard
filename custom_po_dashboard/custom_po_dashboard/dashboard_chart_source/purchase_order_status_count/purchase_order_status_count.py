@@ -5,7 +5,6 @@
 import frappe
 from frappe import _
 from frappe.utils.dashboard import cache_source
-from frappe.utils import get_datetime_range # Import if date filtering is added
 
 COLOR_MAP = {
 	# User Specified / Workflow States:
@@ -44,47 +43,31 @@ def get(
 	heatmap_year=None,
 ):
 	labels, datapoints, colors = [], [], [] # Initialize colors list
-
 	filters_dict = frappe.parse_json(filters) if filters else {}
 	company = filters_dict.get("company") or frappe.defaults.get_user_default("company")
 
 	if not company:
 	    frappe.throw(_("Company not specified in filters or user defaults."))
 
-	# Optional: Add date filtering conditions if needed
-	# date_condition = ""
-	# date_values = {}
-	# if from_date and to_date:
-	#     start_date, end_date = get_datetime_range(from_date, to_date)
-	#     date_condition = "AND creation BETWEEN %(from_date)s AND %(to_date)s" # Or use another date field like posting_date
-	#     date_values = {"from_date": start_date, "to_date": end_date}
 
 	sql_args = {"company": company}
-	# sql_args.update(date_values) # Add date values if using date filters
 
-	# Query 1: Group by workflow_state (excluding specific states)
-	# Note: Using NOT IN for multiple exclusions
-	# Note: Added date_condition placeholder if needed
-	data = frappe.db.sql(f"""
-		SELECT workflow_state, COUNT(*) AS count
-		FROM `tabPurchase Order`
-		WHERE company = %(company)s
-		AND workflow_state NOT IN ('Expect Delivery', 'PO Rejected', 'Rejected')
-		-- {date_condition}  -- Uncomment and adjust if using date filters
-		GROUP BY workflow_state
+	data = frappe.db.sql("""
+	    SELECT workflow_state, COUNT(*) AS count
+	    FROM `tabPurchase Order`
+	    WHERE company = %(company)s
+	    AND workflow_state NOT IN ('Expect Delivery', 'PO Rejected', 'Rejected')
+	    GROUP BY workflow_state
 	""", values=sql_args, as_dict=True)
 
-	# Query 2: Group by status when workflow_state is 'Expect Delivery' (excluding specific statuses)
-	# Note: Added date_condition placeholder if needed
-	expected_delivery = frappe.db.sql(f"""
-		SELECT status as workflow_state, COUNT(*) AS count
-		FROM `tabPurchase Order`
-		WHERE company = %(company)s
-		AND workflow_state = 'Expect Delivery'
-		AND status NOT IN ('Completed', 'Cancelled', 'Closed')
-		-- {date_condition}  -- Uncomment and adjust if using date filters
-		GROUP BY status
-	""", values=sql_args, as_dict=True) # Use same args (company, potentially dates)
+	expected_delivery = frappe.db.sql("""
+	    SELECT status as workflow_state, COUNT(*) AS count
+	    FROM `tabPurchase Order`
+	    WHERE company = %(company)s
+	    AND workflow_state = 'Expect Delivery'
+	    AND status NOT IN ('Completed', 'Cancelled', 'Closed')
+	    GROUP BY status
+	""", values=sql_args, as_dict=True)
 
 	# Combine results
 	data.extend(expected_delivery)
