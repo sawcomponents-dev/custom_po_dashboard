@@ -11,4 +11,8 @@ frappe.dashboards.chart_sources["Purchase Order Status Count"] = {
 			default: frappe.defaults.get_user_default("Company"),
 		},
 	],
+	afterRender: function(chart) {
+        if (chart && chart.chart) {
+        }
+    }
 };
