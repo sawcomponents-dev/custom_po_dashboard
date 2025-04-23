@@ -1,3 +1,6 @@
+# Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
+# License: GNU General Public License v3. See license.txt
+
 import frappe
 from frappe import _
 from frappe.utils.dashboard import cache_source
@@ -25,7 +28,7 @@ DEFAULT_COLOR = "#f8f9fa"  # Very light grey / almost white
 @frappe.whitelist()
 @cache_source
 def get(chart_name=None, chart=None, no_cache=None, filters=None, from_date=None, to_date=None, timespan=None, time_interval=None, heatmap_year=None):
-    labels, datapoints, colors = [], [], []
+    labels, datapoints = [], []
     
     filters_dict = frappe.parse_json(filters) if filters else {}
     company = filters_dict.get("company") or frappe.defaults.get_user_default("company")
@@ -68,11 +71,17 @@ def get(chart_name=None, chart=None, no_cache=None, filters=None, from_date=None
             
         labels.append(_(state_or_status))
         datapoints.append(d.count)
-        colors.append(COLOR_MAP.get(state_or_status, DEFAULT_COLOR))
     
     return {
         "labels": labels,
         "datasets": [{"name": _("Documents Count"), "values": datapoints}],
         "type": "bar",
-        "colors": colors  # This is the key part
+        # Try explicit colors option in this format:
+        "colors": list(COLOR_MAP.values())[:len(datapoints)],
+        # Add custom options to make it work with Frappe Charts
+        "chartOptions": {
+            "discreteDomains": 1,
+            "spaceRatio": 0.2,
+            "individualBarColors": True
+        }
     }
